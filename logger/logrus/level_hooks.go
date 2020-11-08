@@ -1,25 +1,36 @@
 package logrus
 
 import (
-	"github.com/stack-labs/stack-rpc/logger"
-	"gopkg.in/natefinch/lumberjack.v2"
+	"fmt"
 	"io"
 
 	ls "github.com/sirupsen/logrus"
+	"github.com/stack-labs/stack-rpc-plugins/logger/logrus/lumberjack.v2"
+	"github.com/stack-labs/stack-rpc/logger"
 )
 
 func prepareLevelHooks(opts logger.PersistenceOptions, l ls.Level) ls.LevelHooks {
 	hooks := make(ls.LevelHooks)
+
 	for _, level := range ls.AllLevels {
-		if level >= l {
+		if level <= l {
+			fileName := fmt.Sprintf("%s%s%s.log", opts.Dir, pathSeparator, level.String())
+			logger.Infof("level %s logs to file: %s", level.String(), fileName)
+			// todo default options?
+			maxBackups := 14
+			if opts.MaxFileSize != 0 {
+				maxBackups = opts.MaxBackupSize / opts.MaxFileSize
+			}
+
 			hooks[level] = []ls.Hook{
 				&PersistenceLevelHook{
 					Writer: &lumberjack.Logger{
-						Filename:   opts.Dir + pathSeparator + level.String(),
-						MaxSize:    500, // megabytes
-						MaxBackups: 3,
-						MaxAge:     28,   //days
-						Compress:   true, // disabled by default
+						Filename:   fileName,
+						MaxSize:    opts.MaxFileSize,
+						MaxBackups: maxBackups,
+						MaxAge:     opts.MaxBackupKeepDays,
+						Compress:   true,
+						BackupDir:  opts.BackupDir,
 					},
 					Fired:  true,
 					levels: []ls.Level{level},
@@ -42,6 +53,10 @@ func (hook *PersistenceLevelHook) Levels() []ls.Level {
 }
 
 func (hook *PersistenceLevelHook) Fire(entry *ls.Entry) error {
-	hook.Fired = true
-	return nil
+	line, err := entry.String()
+	if err != nil {
+		return err
+	}
+	_, err = hook.Writer.Write([]byte(line))
+	return err
 }
