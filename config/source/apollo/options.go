@@ -12,7 +12,6 @@ type addrKey struct{}
 type namespacesKey struct{}
 type isBackupConfigKey struct{}
 type secretKey struct{}
-type backupConfigPathKey struct{}
 
 func AppID(id string) source.Option {
 	return func(o *source.Options) {
@@ -53,13 +52,6 @@ func Secret(secret string) source.Option {
 	return func(o *source.Options) {
 		prepareCtx(o)
 		o.Context = context.WithValue(o.Context, secretKey{}, secret)
-	}
-}
-
-func BackupConfigPath(backupConfigPath string) source.Option {
-	return func(o *source.Options) {
-		prepareCtx(o)
-		o.Context = context.WithValue(o.Context, backupConfigPathKey{}, backupConfigPath)
 	}
 }
 

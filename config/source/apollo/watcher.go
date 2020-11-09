@@ -1,10 +1,9 @@
 package apollo
 
 import (
-	"github.com/zouyx/agollo/v4"
-	"github.com/zouyx/agollo/v4/storage"
-
 	"github.com/stack-labs/stack-rpc/config/source"
+	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo"
+	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/storage"
 )
 
 type changeListener struct {

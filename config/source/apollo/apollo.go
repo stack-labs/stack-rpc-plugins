@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/magiconair/properties"
-	apo "github.com/zouyx/agollo/v4"
-	apoC "github.com/zouyx/agollo/v4/env/config"
 	"github.com/stack-labs/stack-rpc/config/source"
-	"github.com/stack-labs/stack-rpc/util/log"
+	log "github.com/stack-labs/stack-rpc/logger"
+	apo "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo"
+	apoC "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/config"
 )
 
 type apolloSource struct {
@@ -20,13 +20,12 @@ type apolloSource struct {
 }
 
 var (
-	DefaultAppID            = "micro"
-	DefaultAddr             = "http://127.0.0.1:8080"
-	DefaultCluster          = "dev"
-	DefaultIsBackupConfig   = true
-	DefaultNamespaces       = "application"
-	DefaultSecret           = ""
-	DefaultBackupConfigPath = "/app/"
+	DefaultAppID          = "stack"
+	DefaultAddr           = "http://127.0.0.1:8080"
+	DefaultCluster        = "dev"
+	DefaultIsBackupConfig = false
+	DefaultNamespaces     = "application"
+	DefaultSecret         = ""
 )
 
 func (a *apolloSource) Read() (set *source.ChangeSet, err error) {
@@ -63,6 +62,11 @@ func read(ns []string, client *apo.Client) (set *source.ChangeSet, err error) {
 	set.Format = "json"
 	set.Source = "file"
 
+	if p == nil || p.Len() == 0 {
+		err = fmt.Errorf("apollo data is nill, check the apollo error logs")
+		log.Warn(err)
+	}
+
 	return
 }
 
@@ -72,13 +76,11 @@ func NewSource(opts ...source.Option) source.Source {
 		o(&options)
 	}
 
-	appID := "micro"
+	appID := "stack"
 	addr := DefaultAddr
 	cluster := DefaultCluster
-	isBackupConfig := DefaultIsBackupConfig
 	namespaces := DefaultNamespaces
 	secret := DefaultSecret
-	backupConfigPath := DefaultBackupConfigPath
 
 	if options.Context != nil {
 		appIDTemp, ok := options.Context.Value(appIDKey{}).(string)
@@ -99,28 +101,20 @@ func NewSource(opts ...source.Option) source.Source {
 		if ok {
 			namespaces = namespaceTemp
 		}
-		isBackupConfigTemp, ok := options.Context.Value(isBackupConfigKey{}).(bool)
-		if ok {
-			isBackupConfig = isBackupConfigTemp
-		}
+
 		secretTemp, ok := options.Context.Value(secretKey{}).(string)
 		if ok {
 			secret = secretTemp
 		}
-		backupConfigPathTemp, ok := options.Context.Value(backupConfigPathKey{}).(string)
-		if ok {
-			backupConfigPath = backupConfigPathTemp
-		}
 	}
 
 	c := &apoC.AppConfig{
-		AppID:            appID,
-		Cluster:          cluster,
-		IP:               addr,
-		NamespaceName:    namespaces,
-		IsBackupConfig:   isBackupConfig,
-		Secret:           secret,
-		BackupConfigPath: backupConfigPath,
+		AppID:          appID,
+		Cluster:        cluster,
+		IP:             addr,
+		NamespaceName:  namespaces,
+		IsBackupConfig: false,
+		Secret:         secret,
 	}
 
 	client, err := apo.StartWithConfig(func() (*apoC.AppConfig, error) {
@@ -137,38 +131,4 @@ func NewSource(opts ...source.Option) source.Source {
 		namespaces: strings.Split(namespaces, ","),
 		opts:       options,
 	}
-}
-
-type DefaultLogger struct {
-}
-
-func (d *DefaultLogger) Debugf(format string, params ...interface{}) {
-	log.Debugf(format, params)
-}
-
-func (d *DefaultLogger) Infof(format string, params ...interface{}) {
-	log.Infof(format, params)
-}
-
-func (d *DefaultLogger) Warnf(format string, params ...interface{}) {
-	log.Warnf(format, params)
-}
-
-func (d *DefaultLogger) Errorf(format string, params ...interface{}) {
-	log.Errorf(format, params)
-}
-
-func (d *DefaultLogger) Debug(v ...interface{}) {
-	log.Debug(v)
-}
-func (d *DefaultLogger) Info(v ...interface{}) {
-	log.Info(v)
-}
-
-func (d *DefaultLogger) Warn(v ...interface{}) {
-	log.Warn(v)
-}
-
-func (d *DefaultLogger) Error(v ...interface{}) {
-	log.Error(v)
 }
