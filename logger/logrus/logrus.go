@@ -57,13 +57,22 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 		}
 
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
-			_ = os.MkdirAll(dir, 755)
+			err = os.MkdirAll(dir, os.ModePerm)
+			if err != nil {
+				logger.Errorf("create logs dir err: %s", err)
+			}
 		}
 
 		l.opts.Persistence.Dir = dir
 
 		if l.opts.Persistence.BackupDir == "" {
 			l.opts.Persistence.BackupDir = fmt.Sprintf("%s%s%s", dir, pathSeparator, "backup")
+			if _, err := os.Stat(l.opts.Persistence.BackupDir); os.IsNotExist(err) {
+				err = os.MkdirAll(l.opts.Persistence.BackupDir, os.ModePerm)
+				if err != nil {
+					logger.Errorf("create backup dir err: %s", err)
+				}
+			}
 		}
 	}
 
@@ -75,8 +84,9 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 	log.ExitFunc = l.opts.ExitFunc
 	if l.opts.SplitLevel {
 		// Send all logs to nowhere by default
+		logger.Infof("split log into different level files")
 		log.SetOutput(ioutil.Discard)
-		log.ReplaceHooks(prepareLevelHooks(log.Level))
+		log.ReplaceHooks(prepareLevelHooks(*l.opts.Persistence, log.Level))
 	}
 	l.Logger = log
 
@@ -84,7 +94,8 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 }
 
 func (l *logrusLogger) String() string {
-	return "logrus"
+	// stack-rpc-logrus
+	return "slogrus"
 }
 
 func (l *logrusLogger) Fields(fields map[string]interface{}) logger.Logger {
@@ -118,7 +129,10 @@ func NewLogger(opts ...logger.Option) logger.Logger {
 	}
 
 	l := &logrusLogger{opts: options}
-	_ = l.Init(opts...)
+	err := l.Init(opts...)
+	if err != nil {
+		logger.Errorf("init logrus err: %s", err)
+	}
 	return l
 }
 
