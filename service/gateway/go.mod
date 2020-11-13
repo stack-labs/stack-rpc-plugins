@@ -9,7 +9,6 @@ replace (
 
 require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
-	github.com/coreos/bbolt v0.0.0-00010101000000-000000000000 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/golang/protobuf v1.4.3
 	github.com/gorilla/mux v1.7.4
@@ -18,7 +17,7 @@ require (
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/nats-io/nats-server/v2 v2.1.9 // indirect
 	github.com/soheilhy/cmux v0.1.4 // indirect
-	github.com/stack-labs/stack-rpc v0.0.0-20201109172001-476524747036
+	github.com/stack-labs/stack-rpc v0.0.0-20201113122949-6f4cb846af53
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20200427203606-3cfed13b9966 // indirect
 	github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2 // indirect
 	go.etcd.io/bbolt v1.3.5 // indirect

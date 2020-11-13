@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/stack-labs/stack-rpc/cli"
 	"github.com/stack-labs/stack-rpc/metadata"
+	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
-//ACMEHosts of helper...
+// ACMEHosts of helper...
 func ACMEHosts(ctx *cli.Context) []string {
 	var hosts []string
 	for _, host := range strings.Split(ctx.GlobalString("acme_hosts"), ",") {
@@ -24,7 +24,7 @@ func ACMEHosts(ctx *cli.Context) []string {
 	return hosts
 }
 
-//RequestToContext of helper...
+// RequestToContext of helper...
 func RequestToContext(r *http.Request) context.Context {
 	ctx := context.Background()
 	md := make(metadata.Metadata)
@@ -34,7 +34,7 @@ func RequestToContext(r *http.Request) context.Context {
 	return metadata.NewContext(ctx, md)
 }
 
-//TLSConfig ...
+// TLSConfig ...
 func TLSConfig(ctx *cli.Context) (*tls.Config, error) {
 	cert := ctx.GlobalString("tls_cert_file")
 	key := ctx.GlobalString("tls_key_file")
@@ -71,7 +71,7 @@ func TLSConfig(ctx *cli.Context) (*tls.Config, error) {
 	return nil, errors.New("TLS certificate and key files not specified")
 }
 
-//ServeCORS ...
+// ServeCORS ...
 func ServeCORS(w http.ResponseWriter, r *http.Request) {
 	set := func(w http.ResponseWriter, k, v string) {
 		if v := w.Header().Get(k); len(v) > 0 {
