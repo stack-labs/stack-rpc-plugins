@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stack-labs/stack-rpc"
-	"github.com/stack-labs/stack-rpc/cli"
+	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
 func TestCommands(t *testing.T) {

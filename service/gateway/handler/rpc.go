@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/stack-labs/stack-rpc"
 	"github.com/stack-labs/stack-rpc/client"
-	"github.com/stack-labs/stack-rpc/cmd"
 	"github.com/stack-labs/stack-rpc/errors"
 
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/helper"
@@ -22,9 +22,18 @@ type rpcRequest struct {
 	Request  interface{}
 }
 
+type rpcHandler struct {
+	opts stack.Options
+}
+
+func NewRPCHandlerFunc(opts stack.Options) http.HandlerFunc {
+	rpc := rpcHandler{opts: opts}
+	return rpc.Handler
+}
+
 // RPC Handler passes on a JSON or form encoded RPC request to
 // a service.
-func RPC(w http.ResponseWriter, r *http.Request) {
+func (rpc *rpcHandler) Handler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "OPTIONS" {
 		helper.ServeCORS(w, r)
@@ -117,8 +126,8 @@ func RPC(w http.ResponseWriter, r *http.Request) {
 	// create request/response
 	var response json.RawMessage
 	var err error
-	// TODO
-	req := (*cmd.DefaultOptions().Client).NewRequest(service, endpoint, request, client.WithContentType("application/json"))
+	// TODO stack-rpc
+	req := rpc.opts.Client.NewRequest(service, endpoint, request, client.WithContentType("application/json"))
 	// req := client.DefaultClient.NewRequest(service, endpoint, request, client.WithContentType("application/json"))
 
 	// create context
@@ -138,8 +147,8 @@ func RPC(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// remote call
-	// TODO
-	err = (*cmd.DefaultOptions().Client).Call(ctx, req, &response, opts...)
+	// TODO stack-rpc
+	err = rpc.opts.Client.Call(ctx, req, &response, opts...)
 	// err = client.DefaultClient.Call(ctx, req, &response, opts...)
 	if err != nil {
 		ce := errors.Parse(err.Error())
