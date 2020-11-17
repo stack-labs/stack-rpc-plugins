@@ -11,8 +11,8 @@ import (
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/api"
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/platform"
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/plugin"
-	"github.com/stack-labs/stack-rpc/cli"
 	"github.com/stack-labs/stack-rpc/cmd"
+	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
 // App Info Vars
@@ -37,7 +37,7 @@ var (
 
 	ErrHelp                    = errors.New("flag: help requested")
 	ErrParsedOver              = errors.New("arguments: parsed over")
-	ErrParsedDoubleStrike      = errors.New("warning: unexpacted flag --")
+	ErrParsedDoubleStrike      = errors.New("warning: unexpacted flag -- ")
 	ErrParsedNoMainFlagValue   = errors.New("warning: no value found in Mian flag")
 	ErrParsedNoSubCmdFlagValue = errors.New("warning: no value found in SubCmd flag")
 	errorLastMainFlag          error
@@ -339,5 +339,4 @@ func parseOne(s string, appFlags []cli.Flag) (bool, error) {
 	}
 	// find a value
 	return true, nil
-
 }

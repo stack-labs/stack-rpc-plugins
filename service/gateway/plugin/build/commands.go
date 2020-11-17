@@ -2,13 +2,13 @@ package build
 
 import (
 	"fmt"
+	"github.com/stack-labs/stack-rpc/plugin/so"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/plugin"
 	"github.com/stack-labs/stack-rpc/cli"
-	goplugin "github.com/stack-labs/stack-rpc/plugin"
 	"github.com/stack-labs/stack-rpc/util/log"
 )
 
@@ -54,7 +54,7 @@ func build(ctx *cli.Context) {
 		out = filepath.Join(out, name+".so")
 	}
 
-	if err := goplugin.Build(out, &goplugin.Config{
+	if err := so.Build(out, &so.Config{
 		Name:    name,
 		Type:    typ,
 		Path:    path,

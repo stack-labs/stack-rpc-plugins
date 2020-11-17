@@ -2,11 +2,10 @@ package build
 
 import (
 	"fmt"
+	"github.com/stack-labs/stack-rpc/plugin/so"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/stack-labs/stack-rpc/plugin"
 )
 
 func buildSo(soPath string, parts []string) error {
@@ -28,7 +27,7 @@ func buildSo(soPath string, parts []string) error {
 	}
 
 	// now build the plugin
-	if err := plugin.Build(soPath, &plugin.Config{
+	if err := so.Build(soPath, &so.Config{
 		Name:    name,
 		Type:    typ,
 		Path:    filepath.Join(append([]string{"github.com/micro/go-plugins"}, parts...)...),
@@ -70,11 +69,11 @@ func load(p string) error {
 	}
 
 	// load the plugin
-	pl, err := plugin.Load(soPath)
+	pl, err := so.Load(soPath)
 	if err != nil {
 		return fmt.Errorf("Failed to load plugin %s: %v", soPath, err)
 	}
 
 	// Initialise the plugin
-	return plugin.Init(pl)
+	return so.Init(pl)
 }

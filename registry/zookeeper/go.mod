@@ -5,6 +5,7 @@ go 1.14
 replace (
 	github.com/stack-labs/stack-rpc v1.0.0 => ../../../stack-rpc
 	google.golang.org/grpc => google.golang.org/grpc v1.26.0
+	github.com/coreos/bbolt => go.etcd.io/bbolt v1.3.4
 )
 
 require (
