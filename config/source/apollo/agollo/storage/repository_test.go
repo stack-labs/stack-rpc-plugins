@@ -18,21 +18,21 @@
 package storage
 
 import (
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/agcache/memory"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/config"
-	jsonFile "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/file/json"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/extension"
 	"strings"
 	"testing"
 	"time"
 
-	_ "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/agcache/memory"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env"
-	_ "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/file/json"
-	. "github.com/tevid/gohamcrest"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/agcache/memory"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/config"
+	jsonFile "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/file/json"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/extension"
 
-	_ "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/utils/parse/normal"
-	_ "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/utils/parse/properties"
+	_ "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/agcache/memory"
+	_ "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/file/json"
+	_ "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/utils/parse/normal"
+	_ "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/utils/parse/properties"
+	. "github.com/tevid/gohamcrest"
 )
 
 //init param

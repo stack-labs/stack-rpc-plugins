@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/magiconair/properties"
-	"github.com/stack-labs/stack-rpc/config/source"
+	apo "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo"
+	apoC "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/config"
 	log "github.com/stack-labs/stack-rpc/logger"
-	apo "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo"
-	apoC "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/config"
+	"github.com/stack-labs/stack-rpc/pkg/config/source"
 )
 
 type apolloSource struct {

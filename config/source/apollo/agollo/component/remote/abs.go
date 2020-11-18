@@ -18,10 +18,10 @@
 package remote
 
 import (
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/config"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/protocol/http"
 	log "github.com/stack-labs/stack-rpc/logger"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/config"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/protocol/http"
 )
 
 // AbsApolloConfig 抽象 apollo 配置

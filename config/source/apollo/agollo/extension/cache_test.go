@@ -22,7 +22,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/agcache"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/agcache"
 	. "github.com/tevid/gohamcrest"
 )
 

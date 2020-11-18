@@ -18,11 +18,11 @@
 package notify
 
 import (
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/component/remote"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/storage"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/component/remote"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/storage"
 	"time"
 
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/config"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/config"
 )
 
 const (
@@ -55,7 +55,7 @@ func (c *ConfigComponent) Start() {
 		case <-t2.C:
 			configs := instance.Sync(c.appConfig)
 			for _, apolloConfig := range configs {
-				c.cache.UpdateApolloConfig(apolloConfig, c.appConfig, true)
+				c.cache.UpdateApolloConfig(apolloConfig, c.appConfig, false)
 			}
 			t2.Reset(longPollInterval)
 		}
