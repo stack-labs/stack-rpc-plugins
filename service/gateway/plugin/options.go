@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"github.com/stack-labs/stack-rpc/config"
 	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
@@ -10,7 +11,7 @@ type Options struct {
 	Flags    []cli.Flag
 	Commands []cli.Command
 	Handlers []Handler
-	Init     func(*cli.Context) error
+	Init     func(cfg config.Config) error
 }
 
 type Option func(o *Options)
@@ -44,7 +45,7 @@ func WithName(n string) Option {
 }
 
 // WithInit sets the init function
-func WithInit(fn func(*cli.Context) error) Option {
+func WithInit(fn func(cfg config.Config) error) Option {
 	return func(o *Options) {
 		o.Init = fn
 	}
