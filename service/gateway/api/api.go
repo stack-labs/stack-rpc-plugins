@@ -30,70 +30,75 @@ import (
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/handler"
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/helper"
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/plugin"
-	"github.com/stack-labs/stack-rpc-plugins/service/gateway/stats"
 )
 
-// basic vars
-var (
-	Name                  = "stack.rpc.gateway"
-	Address               = ":8080"
-	Handler               = "meta"
-	Resolver              = "stack"
-	RPCPath               = "/rpc"
-	APIPath               = "/"
-	ProxyPath             = "/{service:[a-zA-Z0-9]+}"
-	Namespace             = "stack.rpc.api"
-	HeaderPrefix          = "X-Stack-"
-	EnableRPC             = false
-	ACMEProvider          = "autocert"
-	ACMEChallengeProvider = "cloudflare"
-	ACMECA                = acme.LetsEncryptProductionCA
-)
+type config struct {
+	Address      string      `json:"address"`
+	Handler      string      `json:"handler"`
+	Resolver     string      `json:"resolver"`
+	RPCPath      string      `json:"rpc_path"`
+	APIPath      string      `json:"api_path"`
+	ProxyPath    string      `json:"proxy_path"`
+	Namespace    string      `json:"namespace"`
+	HeaderPrefix string      `json:"header_prefix"`
+	EnableRPC    bool        `json:"enable_rpc"`
+	EnableACME   bool        `json:"enable_acme"`
+	EnableTLS    bool        `json:"enable_tls"`
+	ACME         *acmeConfig `json:"acme"`
+	TLS          *helper.TLS `json:"tls"`
+}
+
+type acmeConfig struct {
+	Provider          string   `json:"provider"`
+	ChallengeProvider string   `json:"challenge_provider"`
+	CA                string   `json:"ca"`
+	Hosts             []string `json:"hosts"`
+}
+
+func newDefaultConfig() *config {
+	return &config{
+		Address:      ":8080",
+		Handler:      "meta",
+		Resolver:     "stack",
+		RPCPath:      "/rpc",
+		APIPath:      "/",
+		ProxyPath:    "/{service:[a-zA-Z0-9]+}",
+		Namespace:    "stack.rpc.gateway",
+		HeaderPrefix: "X-Stack-",
+		EnableRPC:    false,
+		ACME: &acmeConfig{
+			Provider:          "autocert",
+			ChallengeProvider: "cloudflare",
+			CA:                acme.LetsEncryptProductionCA,
+		},
+	}
+}
 
 // run api gateway
-func Run(ctx *cli.Context, service stack.Service) ([]stack.Option, error) {
-	if len(ctx.GlobalString("server_name")) > 0 {
-		Name = ctx.GlobalString("server_name")
-	}
-	if len(ctx.String("address")) > 0 {
-		Address = ctx.String("address")
-	}
-	if len(ctx.String("handler")) > 0 {
-		Handler = ctx.String("handler")
-	}
-	if len(ctx.String("namespace")) > 0 {
-		Namespace = ctx.String("namespace")
-	}
-	if len(ctx.String("resolver")) > 0 {
-		Resolver = ctx.String("resolver")
-	}
-	if len(ctx.String("enable_rpc")) > 0 {
-		EnableRPC = ctx.Bool("enable_rpc")
-	}
-	if len(ctx.GlobalString("acme_provider")) > 0 {
-		ACMEProvider = ctx.GlobalString("acme_provider")
-	}
+func Run(svc stack.Service) ([]stack.Option, error) {
+	cfg := svc.Options().Config
+	conf := newDefaultConfig()
+	cfg.Get("gateway").Scan(conf)
 
 	// Init plugins
 	for _, p := range plugin.Plugins() {
-		p.Init(ctx)
+		p.Init(cfg)
 	}
 
 	// Init API
 	var opts []server.Option
 
-	if ctx.GlobalBool("enable_acme") {
-		hosts := helper.ACMEHosts(ctx)
+	if conf.EnableACME {
 		opts = append(opts, server.EnableACME(true))
-		opts = append(opts, server.ACMEHosts(hosts...))
-		switch ACMEProvider {
+		opts = append(opts, server.ACMEHosts(conf.ACME.Hosts...))
+		switch conf.ACME.Provider {
 		case "autocert":
 			opts = append(opts, server.ACMEProvider(autocert.New()))
 		default:
-			log.Fatalf("%s is not a valid ACME provider\n", ACMEProvider)
+			log.Fatalf("%s is not a valid ACME provider\n", conf.ACME.Provider)
 		}
-	} else if ctx.GlobalBool("enable_tls") {
-		config, err := helper.TLSConfig(ctx)
+	} else if conf.EnableTLS {
+		config, err := helper.TLSConfig(conf.TLS)
 		if err != nil {
 			fmt.Println(err.Error())
 			return nil, err
@@ -108,14 +113,6 @@ func Run(ctx *cli.Context, service stack.Service) ([]stack.Option, error) {
 	r := mux.NewRouter()
 	h = r
 
-	if ctx.GlobalBool("enable_stats") {
-		st := stats.New()
-		r.HandleFunc("/stats", st.StatsHandler)
-		h = st.ServeHTTP(r)
-		st.Start()
-		defer st.Stop()
-	}
-
 	// return version and list of services
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		helper.ServeCORS(w, r)
@@ -124,7 +121,8 @@ func Run(ctx *cli.Context, service stack.Service) ([]stack.Option, error) {
 			return
 		}
 
-		response := fmt.Sprintf(`{"version": "%s"}`, ctx.App.Version)
+		// TODO index custom
+		response := fmt.Sprintf(`{"version": "%s"}`, svc.Server().Options().Version)
 		w.Write([]byte(response))
 	})
 
@@ -139,25 +137,24 @@ func Run(ctx *cli.Context, service stack.Service) ([]stack.Option, error) {
 	// 	srvOpts = append(srvOpts, stack.RegisterInterval(i*time.Second))
 	// }
 
-	// initialise service
-	// service := stack.NewService(srvOpts...)
-
+	// initialise svc
+	// svc := stack.NewService(srvOpts...)
 	// register rpc handler
-	if EnableRPC {
-		log.Logf("Registering RPC Handler at %s", RPCPath)
-		r.Handle(RPCPath, handler.NewRPCHandlerFunc(service.Options()))
+	if conf.EnableRPC {
+		log.Logf("Registering RPC Handler at %s", conf.RPCPath)
+		r.Handle(conf.RPCPath, handler.NewRPCHandlerFunc(svc.Options()))
 	}
 
 	// resolver options
 	ropts := []resolver.Option{
-		resolver.WithNamespace(Namespace),
-		resolver.WithHandler(Handler),
+		resolver.WithNamespace(conf.Namespace),
+		resolver.WithHandler(conf.Handler),
 	}
 
 	// default resolver
 	rr := rrstack.NewResolver(ropts...)
 
-	switch Resolver {
+	switch conf.Resolver {
 	case "host":
 		rr = host.NewResolver(ropts...)
 	case "path":
@@ -166,85 +163,85 @@ func Run(ctx *cli.Context, service stack.Service) ([]stack.Option, error) {
 		rr = grpc.NewResolver(ropts...)
 	}
 
-	switch Handler {
+	switch conf.Handler {
 	case "rpc":
-		log.Logf("Registering API RPC Handler at %s", APIPath)
+		log.Logf("Registering API RPC Handler at %s", conf.APIPath)
 		rt := regRouter.NewRouter(
-			router.WithNamespace(Namespace),
+			router.WithNamespace(conf.Namespace),
 			router.WithHandler(arpc.Handler),
 			router.WithResolver(rr),
-			router.WithRegistry(service.Options().Registry),
+			router.WithRegistry(svc.Options().Registry),
 		)
 		rp := arpc.NewHandler(
-			ahandler.WithNamespace(Namespace),
+			ahandler.WithNamespace(conf.Namespace),
 			ahandler.WithRouter(rt),
-			ahandler.WithService(service),
+			ahandler.WithService(svc),
 		)
-		r.PathPrefix(APIPath).Handler(rp)
+		r.PathPrefix(conf.APIPath).Handler(rp)
 	case "api":
-		log.Logf("Registering API Request Handler at %s", APIPath)
+		log.Logf("Registering API Request Handler at %s", conf.APIPath)
 		rt := regRouter.NewRouter(
-			router.WithNamespace(Namespace),
+			router.WithNamespace(conf.Namespace),
 			router.WithHandler(aapi.Handler),
 			router.WithResolver(rr),
-			router.WithRegistry(service.Options().Registry),
+			router.WithRegistry(svc.Options().Registry),
 		)
 		ap := aapi.NewHandler(
-			ahandler.WithNamespace(Namespace),
+			ahandler.WithNamespace(conf.Namespace),
 			ahandler.WithRouter(rt),
-			ahandler.WithService(service),
+			ahandler.WithService(svc),
 		)
-		r.PathPrefix(APIPath).Handler(ap)
+		r.PathPrefix(conf.APIPath).Handler(ap)
 	case "event":
-		log.Logf("Registering API Event Handler at %s", APIPath)
+		log.Logf("Registering API Event Handler at %s", conf.APIPath)
 		rt := regRouter.NewRouter(
-			router.WithNamespace(Namespace),
+			router.WithNamespace(conf.Namespace),
 			router.WithHandler(event.Handler),
 			router.WithResolver(rr),
-			router.WithRegistry(service.Options().Registry),
+			router.WithRegistry(svc.Options().Registry),
 		)
 		ev := event.NewHandler(
-			ahandler.WithNamespace(Namespace),
+			ahandler.WithNamespace(conf.Namespace),
 			ahandler.WithRouter(rt),
-			ahandler.WithService(service),
+			ahandler.WithService(svc),
 		)
-		r.PathPrefix(APIPath).Handler(ev)
+		r.PathPrefix(conf.APIPath).Handler(ev)
 	case "http", "proxy":
-		log.Logf("Registering API HTTP Handler at %s", ProxyPath)
+		log.Logf("Registering API HTTP Handler at %s", conf.ProxyPath)
 		rt := regRouter.NewRouter(
-			router.WithNamespace(Namespace),
+			router.WithNamespace(conf.Namespace),
 			router.WithHandler(ahttp.Handler),
 			router.WithResolver(rr),
-			router.WithRegistry(service.Options().Registry),
+			router.WithRegistry(svc.Options().Registry),
 		)
 		ht := ahttp.NewHandler(
-			ahandler.WithNamespace(Namespace),
+			ahandler.WithNamespace(conf.Namespace),
 			ahandler.WithRouter(rt),
-			ahandler.WithService(service),
+			ahandler.WithService(svc),
 		)
-		r.PathPrefix(ProxyPath).Handler(ht)
+		r.PathPrefix(conf.ProxyPath).Handler(ht)
 	case "web":
-		log.Logf("Registering API Web Handler at %s", APIPath)
+		log.Logf("Registering API Web Handler at %s", conf.APIPath)
 		rt := regRouter.NewRouter(
-			router.WithNamespace(Namespace),
+			router.WithNamespace(conf.Namespace),
 			router.WithHandler(web.Handler),
 			router.WithResolver(rr),
-			router.WithRegistry(service.Options().Registry),
+			router.WithRegistry(svc.Options().Registry),
 		)
 		w := web.NewHandler(
-			ahandler.WithNamespace(Namespace),
+			ahandler.WithNamespace(conf.Namespace),
 			ahandler.WithRouter(rt),
-			ahandler.WithService(service),
+			ahandler.WithService(svc),
 		)
-		r.PathPrefix(APIPath).Handler(w)
+		r.PathPrefix(conf.APIPath).Handler(w)
 	default:
-		log.Logf("Registering API Default Handler at %s", APIPath)
+		log.Logf("Registering API Default Handler at %s", conf.APIPath)
 		rt := regRouter.NewRouter(
-			router.WithNamespace(Namespace),
+			router.WithNamespace(conf.Namespace),
 			router.WithResolver(rr),
-			router.WithRegistry(service.Options().Registry),
+			router.WithRegistry(svc.Options().Registry),
 		)
-		r.PathPrefix(APIPath).Handler(handler.Meta(service, rt))
+		r.PathPrefix(conf.APIPath).Handler(handler.Meta(svc, rt))
 	}
 
 	// reverse wrap handler
@@ -254,7 +251,7 @@ func Run(ctx *cli.Context, service stack.Service) ([]stack.Option, error) {
 	}
 
 	// create the server
-	api := httpapi.NewServer(Address)
+	api := httpapi.NewServer(conf.Address)
 	api.Init(opts...)
 	api.Handle("/", h)
 
@@ -276,29 +273,34 @@ func Run(ctx *cli.Context, service stack.Service) ([]stack.Option, error) {
 func Options() (options []stack.Option) {
 	flags := []cli.Flag{
 		cli.StringFlag{
-			Name:   "address",
-			Usage:  "Set the api address e.g 0.0.0.0:8080",
-			EnvVar: "MICRO_API_ADDRESS",
+			Name:   "gateway-name",
+			Usage:  "Gateway name",
+			EnvVar: "GATEWAY_NAME",
 		},
 		cli.StringFlag{
-			Name:   "handler",
+			Name:   "gateway-address",
+			Usage:  "Set the gateway address e.g 0.0.0.0:8080",
+			EnvVar: "GATEWAY_ADDRESS",
+		},
+		cli.StringFlag{
+			Name:   "gateway-handler",
 			Usage:  "Specify the request handler to be used for mapping HTTP requests to services; {api, event, http, rpc}",
-			EnvVar: "MICRO_API_HANDLER",
+			EnvVar: "GATEWAY_HANDLER",
 		},
 		cli.StringFlag{
-			Name:   "namespace",
-			Usage:  "Set the namespace used by the API e.g. com.example.api",
-			EnvVar: "MICRO_API_NAMESPACE",
+			Name:   "gateway-namespace",
+			Usage:  "Set the namespace used by the gateway e.g. com.example.gateway",
+			EnvVar: "GATEWAY_NAMESPACE",
 		},
 		cli.StringFlag{
-			Name:   "resolver",
-			Usage:  "Set the hostname resolver used by the API {host, path, grpc}",
-			EnvVar: "MICRO_API_RESOLVER",
+			Name:   "gateway-resolver",
+			Usage:  "Set the hostname resolver used by the gateway {host, path, grpc}",
+			EnvVar: "GATEWAY_RESOLVER",
 		},
 		cli.BoolFlag{
-			Name:   "enable_rpc",
+			Name:   "gateway-enable_rpc",
 			Usage:  "Enable call the backend directly via /rpc",
-			EnvVar: "MICRO_API_ENABLE_RPC",
+			EnvVar: "GATEWAY_ENABLE_RPC",
 		},
 	}
 

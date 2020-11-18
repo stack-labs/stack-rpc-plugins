@@ -5,24 +5,29 @@ import (
 	"testing"
 
 	"github.com/stack-labs/stack-rpc"
-	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
-func TestCommands(t *testing.T) {
+func TestRun(t *testing.T) {
 	type args struct {
-		options []stack.Option
+		svc stack.Service
 	}
 	tests := []struct {
-		name string
-		args args
-		want []cli.Command
+		name    string
+		args    args
+		want    []stack.Option
+		wantErr bool
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Commands(tt.args.options...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Commands() = %v, want %v", got, tt.want)
+			got, err := Run(tt.args.svc)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Run() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

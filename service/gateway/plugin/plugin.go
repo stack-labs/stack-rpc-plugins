@@ -3,6 +3,7 @@ package plugin
 import (
 	"net/http"
 
+	"github.com/stack-labs/stack-rpc/config"
 	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
@@ -18,7 +19,7 @@ type Plugin interface {
 	Handler() Handler
 	// Init called when command line args are parsed.
 	// The initialised cli.Context is passed in.
-	Init(*cli.Context) error
+	Init(config.Config) error
 	// Name of the plugin
 	String() string
 }
@@ -52,8 +53,8 @@ func (p *plugin) Handler() Handler {
 	return p.handler
 }
 
-func (p *plugin) Init(ctx *cli.Context) error {
-	return p.opts.Init(ctx)
+func (p *plugin) Init(cfg config.Config) error {
+	return p.opts.Init(cfg)
 }
 
 func (p *plugin) String() string {
@@ -63,7 +64,7 @@ func (p *plugin) String() string {
 func newPlugin(opts ...Option) Plugin {
 	options := Options{
 		Name: "default",
-		Init: func(ctx *cli.Context) error { return nil },
+		Init: func(cfg config.Config) error { return nil },
 	}
 
 	for _, o := range opts {

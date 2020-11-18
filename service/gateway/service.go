@@ -2,33 +2,20 @@ package gateway
 
 import (
 	"github.com/stack-labs/stack-rpc"
+	"github.com/stack-labs/stack-rpc/util/log"
+
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/api"
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/plugin"
-	"github.com/stack-labs/stack-rpc/pkg/cli"
-	"github.com/stack-labs/stack-rpc/util/log"
 )
 
 func Run(svc stack.Service) {
-	c := svc.Options().Cmd
-	app := c.App()
-
 	// gateway options
 	opts := api.Options()
 	svc.Init(opts...)
 
-	before := app.Before
-
-	var ctx *cli.Context
-
-	// run gateway
-	app.Before = func(c *cli.Context) error {
-		ctx = c
-		return before(c)
-	}
-
 	// after stack service start run api gateway
 	svc.Init(stack.AfterStart(func() error {
-		opts, err := api.Run(ctx, svc)
+		opts, err := api.Run(svc)
 		if err != nil {
 			return err
 		}
