@@ -1,3 +1,5 @@
+// +build gitignore
+
 package handler
 
 import (

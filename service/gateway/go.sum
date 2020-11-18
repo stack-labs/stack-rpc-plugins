@@ -432,6 +432,9 @@ github.com/spf13/pflag v1.0.1-0.20171106142849-4c012f6dcd95/go.mod h1:DYY7MBk1bd
 github.com/src-d/gcfg v1.4.0/go.mod h1:p/UMsR43ujA89BJY9duynAwIpvqEujIH/jFlfL7jWoI=
 github.com/stack-labs/stack-rpc v0.0.0-20201109172001-476524747036 h1:9xEi/Poq+H7P/MDT3gdQGmGLRT8vak+t6j8c9xWLS/U=
 github.com/stack-labs/stack-rpc v0.0.0-20201109172001-476524747036/go.mod h1:j2pdNWaCiLggop4oUfA/mI+Y53CbJQQDm0GPTv7NLoc=
+github.com/stack-labs/stack-rpc v0.0.0-20201111162745-1a1f4a1d2aca h1:uFBNx39iAqeUDCivLZv9f1ICzSy/ekUh/nyt+WAwOl8=
+github.com/stack-labs/stack-rpc v0.0.0-20201113122949-6f4cb846af53 h1:e+FFx9EBP8Uzf8c/u0EFdlNZfkJbsljMJtcSzZEyaQU=
+github.com/stack-labs/stack-rpc v0.0.0-20201113122949-6f4cb846af53/go.mod h1:DPjCA+qDAt6ezu5+LHHqRNu4e13VNcZjdHEi03eYzYo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.2.0/go.mod h1:qt09Ya8vawLte6SNmTgCsAVtYtaKzEcn8ATUoHMkEqE=
@@ -671,6 +674,7 @@ gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8
 gopkg.in/errgo.v2 v2.1.0/go.mod h1:hNsd1EY+bozCKY1Ytp96fpM3vjJbqLJn88ws8XvfDNI=
 gopkg.in/fsnotify.v1 v1.4.7/go.mod h1:Tz8NjZHkW78fSQdbUxIjBTcgA1z1m8ZHf0WmKUhAMys=
 gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2/go.mod h1:Xk6kEKp8OKb+X14hQBKWaSkCsqBpgog8nAV2xsGOxlo=
+gopkg.in/go-playground/assert.v1 v1.2.1/go.mod h1:9RXL0bg/zibRAgZUYszZSwO/z8Y/a8bDuhia5mkpMnE=
 gopkg.in/go-playground/validator.v9 v9.31.0/go.mod h1:+c9/zcJMFNgbLvly1L1V+PpxWdVbfP1avr/N00E2vyQ=
 gopkg.in/h2non/gock.v1 v1.0.15/go.mod h1:sX4zAkdYX1TRGJ2JY156cFspQn4yRWn6p9EMdODlynE=
 gopkg.in/inf.v0 v0.9.1/go.mod h1:cWUDdTG/fYaXco+Dcufb5Vnc6Gp2YChqWtbxRZE0mXw=
