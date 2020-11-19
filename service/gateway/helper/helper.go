@@ -10,18 +10,12 @@ import (
 	"strings"
 
 	"github.com/stack-labs/stack-rpc/metadata"
-	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
-// ACMEHosts of helper...
-func ACMEHosts(ctx *cli.Context) []string {
-	var hosts []string
-	for _, host := range strings.Split(ctx.GlobalString("acme_hosts"), ",") {
-		if len(host) > 0 {
-			hosts = append(hosts, host)
-		}
-	}
-	return hosts
+type TLS struct {
+	CertFile     string `json:"cert_file"`
+	KeyFile      string `json:"key_file"`
+	ClientCAFile string `json:"client_ca_file"`
 }
 
 // RequestToContext of helper...
@@ -35,10 +29,10 @@ func RequestToContext(r *http.Request) context.Context {
 }
 
 // TLSConfig ...
-func TLSConfig(ctx *cli.Context) (*tls.Config, error) {
-	cert := ctx.GlobalString("tls_cert_file")
-	key := ctx.GlobalString("tls_key_file")
-	ca := ctx.GlobalString("tls_client_ca_file")
+func TLSConfig(conf *TLS) (*tls.Config, error) {
+	cert := conf.CertFile
+	key := conf.KeyFile
+	ca := conf.ClientCAFile
 
 	if len(cert) > 0 && len(key) > 0 {
 		certs, err := tls.LoadX509KeyPair(cert, key)

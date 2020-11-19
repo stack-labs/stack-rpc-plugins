@@ -435,6 +435,8 @@ github.com/stack-labs/stack-rpc v0.0.0-20201109172001-476524747036/go.mod h1:j2p
 github.com/stack-labs/stack-rpc v0.0.0-20201111162745-1a1f4a1d2aca h1:uFBNx39iAqeUDCivLZv9f1ICzSy/ekUh/nyt+WAwOl8=
 github.com/stack-labs/stack-rpc v0.0.0-20201113122949-6f4cb846af53 h1:e+FFx9EBP8Uzf8c/u0EFdlNZfkJbsljMJtcSzZEyaQU=
 github.com/stack-labs/stack-rpc v0.0.0-20201113122949-6f4cb846af53/go.mod h1:DPjCA+qDAt6ezu5+LHHqRNu4e13VNcZjdHEi03eYzYo=
+github.com/stack-labs/stack-rpc v0.0.0-20201118152624-d448b92ef772 h1:HsNA9NuMepI+yc7Pc8XWK5jMd0sbMQyS4fUzaBrPEWA=
+github.com/stack-labs/stack-rpc v0.0.0-20201118152624-d448b92ef772/go.mod h1:DPjCA+qDAt6ezu5+LHHqRNu4e13VNcZjdHEi03eYzYo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.2.0/go.mod h1:qt09Ya8vawLte6SNmTgCsAVtYtaKzEcn8ATUoHMkEqE=
