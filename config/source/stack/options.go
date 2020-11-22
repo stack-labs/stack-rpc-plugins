@@ -2,12 +2,14 @@ package stack
 
 import (
 	"context"
+	"github.com/stack-labs/stack-rpc/client"
 
 	"github.com/stack-labs/stack-rpc/pkg/config/source"
 )
 
 type serviceNameKey struct{}
 type pathKey struct{}
+type clientKey struct{}
 
 func ServiceName(a string) source.Option {
 	return func(o *source.Options) {
@@ -25,5 +27,14 @@ func Path(p string) source.Option {
 			o.Context = context.Background()
 		}
 		o.Context = context.WithValue(o.Context, pathKey{}, p)
+	}
+}
+
+func Client(c client.Client) source.Option {
+	return func(o *source.Options) {
+		if o.Context == nil {
+			o.Context = context.Background()
+		}
+		o.Context = context.WithValue(o.Context, clientKey{}, c)
 	}
 }

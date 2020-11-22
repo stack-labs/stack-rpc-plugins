@@ -3,8 +3,8 @@ package stack
 import (
 	"context"
 
-	proto "github.com/micro/go-plugins/config/source/mucp/v2/proto"
-	"github.com/stack-labs/stack-rpc/cmd"
+	proto "github.com/stack-labs/stack-rpc-plugins/config/source/stack/proto"
+	"github.com/stack-labs/stack-rpc/client"
 	log "github.com/stack-labs/stack-rpc/logger"
 	"github.com/stack-labs/stack-rpc/pkg/config/source"
 )
@@ -56,6 +56,7 @@ func NewSource(opts ...source.Option) source.Source {
 
 	addr := DefaultServiceName
 	path := DefaultPath
+	var cli client.Client
 
 	if options.Context != nil {
 		a, ok := options.Context.Value(serviceNameKey{}).(string)
@@ -66,13 +67,22 @@ func NewSource(opts ...source.Option) source.Source {
 		if ok {
 			path = p
 		}
+
+		c, ok := options.Context.Value(clientKey{}).(client.Client)
+		if ok {
+			cli = c
+		}
+	}
+
+	if cli == nil {
+		log.Errorf("create new stack source error, needs a client")
 	}
 
 	s := &mucpSource{
 		serviceName: addr,
 		path:        path,
 		opts:        options,
-		client:      proto.NewSourceService(addr, *cmd.DefaultCmd.Options().Client),
+		client:      proto.NewSourceService(addr, cli),
 	}
 
 	return s

@@ -3,7 +3,7 @@ package stack
 import (
 	"time"
 
-	proto "github.com/micro/go-plugins/config/source/mucp/v2/proto"
+	proto "github.com/stack-labs/stack-rpc-plugins/config/source/stack/proto"
 	"github.com/stack-labs/stack-rpc/pkg/config/source"
 )
 
