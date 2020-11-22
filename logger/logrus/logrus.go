@@ -129,10 +129,10 @@ func NewLogger(opts ...logger.Option) logger.Logger {
 	}
 
 	l := &logrusLogger{opts: options}
-	err := l.Init(opts...)
-	if err != nil {
-		logger.Errorf("init logrus err: %s", err)
+	for _, o := range opts {
+		o(&l.opts.Options)
 	}
+
 	return l
 }
 
