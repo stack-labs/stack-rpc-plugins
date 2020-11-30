@@ -18,11 +18,11 @@
 package serverlist
 
 import (
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/protocol/http"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/protocol/http"
 	"testing"
 
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/config"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/config"
 	. "github.com/tevid/gohamcrest"
 )
 

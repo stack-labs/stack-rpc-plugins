@@ -3,7 +3,7 @@ package apollo
 import (
 	"context"
 
-	"github.com/stack-labs/stack-rpc/config/source"
+	"github.com/stack-labs/stack-rpc/pkg/config/source"
 )
 
 type appIDKey struct{}

@@ -3,13 +3,13 @@ package apollo
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
-	"github.com/magiconair/properties"
-	"github.com/stack-labs/stack-rpc/config/source"
+	apo "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo"
+	apoC "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/config"
 	log "github.com/stack-labs/stack-rpc/logger"
-	apo "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo"
-	apoC "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/config"
+	"github.com/stack-labs/stack-rpc/pkg/config/source"
 )
 
 type apolloSource struct {
@@ -46,28 +46,44 @@ func (a *apolloSource) String() string {
 }
 
 func read(ns []string, client *apo.Client) (set *source.ChangeSet, err error) {
-	s := map[string]string{}
+	s := map[string]interface{}{}
 	set = &source.ChangeSet{}
 	for _, namespace := range ns {
 		cache := client.GetConfigCache(namespace)
 		cache.Range(func(key, value interface{}) bool {
-			s[fmt.Sprintf("%v", key)] = fmt.Sprintf("%v", value)
+			setValue(s, fmt.Sprintf("%v", value), strings.Split(fmt.Sprintf("%v", key), ".")...)
 			return true
 		})
 	}
 
-	p := properties.LoadMap(s)
-	set.Data, _ = json.Marshal(p.Map())
+	set.Data, _ = json.Marshal(s)
 	set.Checksum = set.Sum()
 	set.Format = "json"
 	set.Source = "file"
 
-	if p == nil || p.Len() == 0 {
+	if len(s) == 0 {
 		err = fmt.Errorf("apollo data is nill, check the apollo error logs")
 		log.Warn(err)
 	}
 
 	return
+}
+
+func setValue(input map[string]interface{}, v interface{}, keys ...string) {
+	if len(keys) == 1 {
+		input[keys[0]] = v
+		return
+	} else {
+		var tmpMap map[string]interface{}
+		if input[keys[0]] != nil {
+			tmpMap = input[keys[0]].(map[string]interface{})
+		} else {
+			tmpMap = make(map[string]interface{})
+		}
+
+		input[keys[0]] = tmpMap
+		setValue(tmpMap, v, keys[1:]...)
+	}
 }
 
 func NewSource(opts ...source.Option) source.Source {
@@ -92,11 +108,17 @@ func NewSource(opts ...source.Option) source.Source {
 		clusterTemp, ok := options.Context.Value(clusterKey{}).(string)
 		if ok {
 			cluster = clusterTemp
+		} else if len(os.Getenv("APOLLO_CLUSTER")) > 0 {
+			cluster = os.Getenv("APOLLO_CLUSTER")
 		}
+
 		addrTemp, ok := options.Context.Value(addrKey{}).(string)
 		if ok {
 			addr = addrTemp
+		} else if len(os.Getenv("APOLLO_ADDRESS")) > 0 {
+			addr = os.Getenv("APOLLO_ADDRESS")
 		}
+
 		namespaceTemp, ok := options.Context.Value(namespacesKey{}).(string)
 		if ok {
 			namespaces = namespaceTemp
@@ -105,6 +127,8 @@ func NewSource(opts ...source.Option) source.Source {
 		secretTemp, ok := options.Context.Value(secretKey{}).(string)
 		if ok {
 			secret = secretTemp
+		} else if len(os.Getenv("APOLLO_SECRET_KEY")) > 0 {
+			secret = os.Getenv("APOLLO_SECRET_KEY")
 		}
 	}
 

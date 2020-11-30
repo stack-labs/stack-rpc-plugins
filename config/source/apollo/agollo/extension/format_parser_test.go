@@ -18,7 +18,7 @@
 package extension
 
 import (
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/constant"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/constant"
 	"testing"
 
 	. "github.com/tevid/gohamcrest"

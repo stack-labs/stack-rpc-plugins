@@ -23,7 +23,7 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env/config"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env/config"
 )
 
 const (

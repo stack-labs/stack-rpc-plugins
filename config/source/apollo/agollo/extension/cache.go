@@ -17,7 +17,7 @@
 
 package extension
 
-import "github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/agcache"
+import "github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/agcache"
 
 var (
 	globalCacheFactory agcache.CacheFactory

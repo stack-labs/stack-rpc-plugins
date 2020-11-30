@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-zookeeper/zk"
 	hash "github.com/mitchellh/hashstructure"
+	"github.com/stack-labs/stack-rpc/config"
 	log "github.com/stack-labs/stack-rpc/logger"
 	"github.com/stack-labs/stack-rpc/registry"
 )
@@ -50,6 +51,11 @@ func configure(z *zookeeperRegistry, opts ...registry.Option) error {
 
 	if z.options.Timeout == 0 {
 		z.options.Timeout = 5
+	}
+
+	if len(z.options.Addrs) == 0 {
+		z.options.Addrs = strings.Split(config.Get("stack.registry.zookeeper.address").String(""), ",")
+		log.Infof("zk server address: %v", z.options.Addrs)
 	}
 
 	// already set
@@ -296,10 +302,6 @@ func NewRegistry(opts ...registry.Option) registry.Registry {
 		options:  registry.Options{},
 		register: make(map[string]register),
 		leases:   make(map[string]leases),
-	}
-
-	if err := configure(z, opts...); err != nil {
-		log.Errorf("configure zk err: %s", err)
 	}
 
 	return z

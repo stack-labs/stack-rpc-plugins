@@ -20,7 +20,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/utils"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/utils"
 	"net/url"
 	"strings"
 	"sync"

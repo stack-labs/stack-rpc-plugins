@@ -18,13 +18,13 @@
 package remote
 
 import (
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/constant"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/env"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/extension"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/utils/parse/normal"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/utils/parse/properties"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/utils/parse/yaml"
-	"github.com/stack-labs/stack-rpc/plugins/config/source/apollo/agollo/utils/parse/yml"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/constant"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/env"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/extension"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/utils/parse/normal"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/utils/parse/properties"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/utils/parse/yaml"
+	"github.com/stack-labs/stack-rpc-plugins/config/source/apollo/agollo/utils/parse/yml"
 	. "github.com/tevid/gohamcrest"
 	"net/http"
 	"net/http/httptest"
@@ -115,7 +115,7 @@ func TestAutoSyncConfigServicesNoBackupFile(t *testing.T) {
 	syncApollo.Sync(newAppConfig)
 
 	newAppConfig.NextTryConnTime = 0
-	newAppConfig.IsBackupConfig = true
+	newAppConfig.IsBackupConfig = false
 	configs := syncApollo.Sync(newAppConfig)
 
 	Assert(t, len(configs), GreaterThan(0))
