@@ -9,7 +9,6 @@ import (
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/plugin"
 	"github.com/stack-labs/stack-rpc/pkg/cli"
 	goplugin "github.com/stack-labs/stack-rpc/plugin"
-	"github.com/stack-labs/stack-rpc/util/log"
 )
 
 func build(ctx *cli.Context) {
@@ -31,14 +30,14 @@ func build(ctx *cli.Context) {
 
 	// set the path
 	if len(path) == 0 {
-		// github.com/micro/go-plugins/broker/rabbitmq
-		// github.com/micro/go-plugins/micro/basic_auth
-		path = filepath.Join("github.com/micro/go-plugins", typ, name)
+		// github.com/stack-rpc/stack-rpc-plugins/broker/rabbitmq
+		// github.com/stack-rpc/stack-rpc-plugins/stack/basic_auth
+		path = filepath.Join("github.com/stack-labs/stack-rpc-plugins", typ, name)
 	}
 
 	// set the newfn
 	if len(newfn) == 0 {
-		if typ == "micro" {
+		if typ == "stack" {
 			newfn = "NewPlugin"
 		} else {
 			newfn = "New" + strings.Title(typ)
@@ -71,7 +70,7 @@ func pluginCommands() []cli.Command {
 	return []cli.Command{
 		{
 			Name:   "build",
-			Usage:  "Build a micro plugin",
+			Usage:  "Build a stack plugin",
 			Action: build,
 			Flags: []cli.Flag{
 				cli.StringFlag{
@@ -115,25 +114,9 @@ func Flags() plugin.Plugin {
 		plugin.WithFlag(
 			cli.StringSliceFlag{
 				Name:   "plugin",
-				EnvVar: "MICRO_PLUGIN",
+				EnvVar: "STACK_PLUGIN",
 				Usage:  "Comma separated list of plugins e.g broker/rabbitmq, registry/etcd, micro/basic_auth, /path/to/plugin.so",
 			},
 		),
-		plugin.WithInit(func(ctx *cli.Context) error {
-			plugins := ctx.StringSlice("plugin")
-			if len(plugins) == 0 {
-				return nil
-			}
-
-			for _, p := range plugins {
-				if err := load(p); err != nil {
-					log.Logf("Error loading plugin %s: %v", p, err)
-					return err
-				}
-				log.Logf("Loaded plugin %s\n", p)
-			}
-
-			return nil
-		}),
 	)
 }

@@ -47,7 +47,7 @@ func (rpc *rpcHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	badRequest := func(description string) {
-		e := errors.BadRequest("go.micro.rpc", description)
+		e := errors.BadRequest("stack.rpc", description)
 		w.WriteHeader(400)
 		w.Write([]byte(e.Error()))
 	}
@@ -156,7 +156,7 @@ func (rpc *rpcHandler) Handler(w http.ResponseWriter, r *http.Request) {
 		case 0:
 			// assuming it's totally screwed
 			ce.Code = 500
-			ce.Id = "go.micro.rpc"
+			ce.Id = "stack.rpc"
 			ce.Status = http.StatusText(500)
 			ce.Detail = "error during request: " + ce.Detail
 			w.WriteHeader(500)

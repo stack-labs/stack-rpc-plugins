@@ -273,32 +273,32 @@ func Run(svc stack.Service) ([]stack.Option, error) {
 func Options() (options []stack.Option) {
 	flags := []cli.Flag{
 		cli.StringFlag{
-			Name:   "gateway-name",
+			Name:   "gateway_name",
 			Usage:  "Gateway name",
 			EnvVar: "GATEWAY_NAME",
 		},
 		cli.StringFlag{
-			Name:   "gateway-address",
+			Name:   "gateway_address",
 			Usage:  "Set the gateway address e.g 0.0.0.0:8080",
 			EnvVar: "GATEWAY_ADDRESS",
 		},
 		cli.StringFlag{
-			Name:   "gateway-handler",
+			Name:   "gateway_handler",
 			Usage:  "Specify the request handler to be used for mapping HTTP requests to services; {api, event, http, rpc}",
 			EnvVar: "GATEWAY_HANDLER",
 		},
 		cli.StringFlag{
-			Name:   "gateway-namespace",
+			Name:   "gateway_namespace",
 			Usage:  "Set the namespace used by the gateway e.g. com.example.gateway",
 			EnvVar: "GATEWAY_NAMESPACE",
 		},
 		cli.StringFlag{
-			Name:   "gateway-resolver",
+			Name:   "gateway_resolver",
 			Usage:  "Set the hostname resolver used by the gateway {host, path, grpc}",
 			EnvVar: "GATEWAY_RESOLVER",
 		},
 		cli.BoolFlag{
-			Name:   "gateway-enable_rpc",
+			Name:   "gateway_enable_rpc",
 			Usage:  "Enable call the backend directly via /rpc",
 			EnvVar: "GATEWAY_ENABLE_RPC",
 		},

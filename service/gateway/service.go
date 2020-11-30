@@ -2,13 +2,12 @@ package gateway
 
 import (
 	"github.com/stack-labs/stack-rpc"
-	"github.com/stack-labs/stack-rpc/util/log"
-
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/api"
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/plugin"
+	"github.com/stack-labs/stack-rpc/util/log"
 )
 
-func Run(svc stack.Service) {
+func Hook(svc stack.Service) {
 	// gateway options
 	opts := api.Options()
 	svc.Init(opts...)
