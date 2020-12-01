@@ -22,20 +22,20 @@ func prepareLevelHooks(opts logger.PersistenceOptions, l ls.Level) ls.LevelHooks
 				maxBackups = opts.MaxBackupSize / opts.MaxFileSize
 			}
 
-			hooks[level] = []ls.Hook{
-				&PersistenceLevelHook{
-					Writer: &lumberjack.Logger{
-						Filename:   fileName,
-						MaxSize:    opts.MaxFileSize,
-						MaxBackups: maxBackups,
-						MaxAge:     opts.MaxBackupKeepDays,
-						Compress:   true,
-						BackupDir:  opts.BackupDir,
-					},
-					Fired:  true,
-					levels: []ls.Level{level},
+			hook := &PersistenceLevelHook{
+				Writer: &lumberjack.Logger{
+					Filename:   fileName,
+					MaxSize:    opts.MaxFileSize,
+					MaxBackups: maxBackups,
+					MaxAge:     opts.MaxBackupKeepDays,
+					Compress:   true,
+					BackupDir:  opts.BackupDir,
 				},
+				Fired:  true,
+				levels: []ls.Level{level},
 			}
+
+			hooks[level] = []ls.Hook{hook}
 		}
 	}
 

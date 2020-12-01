@@ -3,6 +3,7 @@ package logrus
 import (
 	"context"
 	"fmt"
+	"github.com/stack-labs/stack-rpc-plugins/logger/logrus/lumberjack.v2"
 	"io/ioutil"
 	"os"
 
@@ -87,6 +88,21 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 		logger.Infof("split log into different level files")
 		log.SetOutput(ioutil.Discard)
 		log.ReplaceHooks(prepareLevelHooks(*l.opts.Persistence, log.Level))
+	} else {
+		// todo default options?
+		maxBackups := 14
+		if l.opts.Persistence.MaxFileSize != 0 {
+			maxBackups = l.opts.Persistence.MaxBackupSize / l.opts.Persistence.MaxFileSize
+		}
+		fileName := fmt.Sprintf("%s%sapp.log", l.opts.Persistence.Dir, pathSeparator)
+		log.SetOutput(&lumberjack.Logger{
+			Filename:   fileName,
+			MaxSize:    l.opts.Persistence.MaxFileSize,
+			MaxBackups: maxBackups,
+			MaxAge:     l.opts.Persistence.MaxBackupKeepDays,
+			Compress:   true,
+			BackupDir:  l.opts.Persistence.BackupDir,
+		})
 	}
 	l.Logger = log
 
