@@ -26,9 +26,9 @@ func Hook(svc stack.Service) {
 	// plugin tags
 	plugins := plugin.Plugins()
 	for _, p := range plugins {
-		log.Infof("plugin: %s", p.String())
+		log.Debugf("plugin: %s", p.String())
 		if flags := p.Flags(); len(flags) > 0 {
-			log.Infof("flags: %+#s", flags)
+			log.Debugf("flags: %+#s", flags)
 			svc.Init(stack.Flags(flags...))
 		}
 	}

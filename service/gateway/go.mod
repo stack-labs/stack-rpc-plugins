@@ -11,5 +11,6 @@ replace (
 require (
 	github.com/golang/protobuf v1.4.3
 	github.com/gorilla/mux v1.7.4
-	github.com/stack-labs/stack-rpc v1.0.0
+	github.com/stack-labs/stack-rpc v0.0.0-20201129142517-808758062249
+	github.com/stretchr/testify v1.4.0
 )
