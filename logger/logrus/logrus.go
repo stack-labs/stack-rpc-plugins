@@ -3,11 +3,12 @@ package logrus
 import (
 	"context"
 	"fmt"
-	"github.com/stack-labs/stack-rpc-plugins/logger/logrus/lumberjack.v2"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/sirupsen/logrus"
+	"github.com/stack-labs/stack-rpc-plugins/logger/logrus/lumberjack.v2"
 	"github.com/stack-labs/stack-rpc/logger"
 )
 
@@ -75,20 +76,7 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 				}
 			}
 		}
-	}
 
-	log := logrus.New() // defaults
-	log.SetLevel(fromStackLevel(l.opts.Level))
-	log.SetOutput(l.opts.Out)
-	log.SetFormatter(l.opts.Formatter)
-	log.SetReportCaller(l.opts.ReportCaller)
-	log.ExitFunc = l.opts.ExitFunc
-	if l.opts.SplitLevel {
-		// Send all logs to nowhere by default
-		logger.Infof("split log into different level files")
-		log.SetOutput(ioutil.Discard)
-		log.ReplaceHooks(prepareLevelHooks(*l.opts.Persistence, log.Level))
-	} else {
 		// todo default options?
 		maxBackups := 14
 		if l.opts.Persistence.MaxFileSize != 0 {
@@ -104,6 +92,24 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 			BackupDir:  l.opts.Persistence.BackupDir,
 		})
 	}
+
+	if l.opts.Out == nil {
+		l.opts.Out = logger.DefaultLogger.Options().Out
+	}
+
+	log := logrus.New() // defaults
+	log.SetLevel(fromStackLevel(l.opts.Level))
+	log.SetOutput(l.opts.Out)
+	log.SetFormatter(l.opts.Formatter)
+	log.SetReportCaller(l.opts.ReportCaller)
+	log.ExitFunc = l.opts.ExitFunc
+	if l.opts.SplitLevel {
+		// Send all logs to nowhere by default
+		logger.Infof("split log into different level files")
+		log.SetOutput(ioutil.Discard)
+		log.ReplaceHooks(prepareLevelHooks(*l.opts.Persistence, log.Level))
+	}
+
 	l.Logger = log
 
 	return nil
