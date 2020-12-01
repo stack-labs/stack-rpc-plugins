@@ -65,7 +65,7 @@ func newDefaultConfig() *config {
 		ProxyPath:    "/{service:[a-zA-Z0-9]+}",
 		Namespace:    "stack.rpc.api",
 		HeaderPrefix: "X-Stack-",
-		EnableRPC:    true,
+		EnableRPC:    false,
 		ACME: &acmeConfig{
 			Provider:          "autocert",
 			ChallengeProvider: "cloudflare",
