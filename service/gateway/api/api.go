@@ -63,7 +63,7 @@ func newDefaultConfig() *config {
 		RPCPath:      "/rpc",
 		APIPath:      "/",
 		ProxyPath:    "/{service:[a-zA-Z0-9]+}",
-		Namespace:    "stack.rpc.gateway",
+		Namespace:    "stack.rpc.api",
 		HeaderPrefix: "X-Stack-",
 		EnableRPC:    false,
 		ACME: &acmeConfig{
@@ -78,7 +78,11 @@ func newDefaultConfig() *config {
 func Run(svc stack.Service) ([]stack.Option, error) {
 	cfg := svc.Options().Config
 	conf := newDefaultConfig()
-	cfg.Get("gateway").Scan(conf)
+	if cfg != nil {
+		if c := cfg.Get("gateway"); c != nil {
+			c.Scan(conf)
+		}
+	}
 
 	// Init plugins
 	for _, p := range plugin.Plugins() {
@@ -257,7 +261,8 @@ func Run(svc stack.Service) ([]stack.Option, error) {
 
 	// Start API
 	if err := api.Start(); err != nil {
-		log.Fatal(err)
+		log.Error(err)
+		return nil, err
 	}
 
 	options := []stack.Option{

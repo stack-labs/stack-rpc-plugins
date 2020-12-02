@@ -19,7 +19,7 @@ func main() {
 	svc := stack.NewService()
 
 	// run gateway
-	gateway.Run(svc)
+	gateway.Hook(svc)
 
 	// run service
 	if err := svc.Run(); err != nil {
