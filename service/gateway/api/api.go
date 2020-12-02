@@ -7,6 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/stack-labs/stack-rpc"
+	"github.com/stack-labs/stack-rpc-plugins/service/gateway/handler"
+	"github.com/stack-labs/stack-rpc-plugins/service/gateway/helper"
+	"github.com/stack-labs/stack-rpc-plugins/service/gateway/plugin"
 	ahandler "github.com/stack-labs/stack-rpc/api/handler"
 	aapi "github.com/stack-labs/stack-rpc/api/handler/api"
 	"github.com/stack-labs/stack-rpc/api/handler/event"
@@ -26,10 +29,6 @@ import (
 	httpapi "github.com/stack-labs/stack-rpc/api/server/http"
 	"github.com/stack-labs/stack-rpc/pkg/cli"
 	"github.com/stack-labs/stack-rpc/util/log"
-
-	"github.com/stack-labs/stack-rpc-plugins/service/gateway/handler"
-	"github.com/stack-labs/stack-rpc-plugins/service/gateway/helper"
-	"github.com/stack-labs/stack-rpc-plugins/service/gateway/plugin"
 )
 
 type config struct {
@@ -280,32 +279,32 @@ func Options() (options []stack.Option) {
 		cli.StringFlag{
 			Name:   "gateway_name",
 			Usage:  "Gateway name",
-			EnvVar: "GATEWAY_NAME",
+			EnvVar: "STACK_GATEWAY_NAME",
 		},
 		cli.StringFlag{
 			Name:   "gateway_address",
 			Usage:  "Set the gateway address e.g 0.0.0.0:8080",
-			EnvVar: "GATEWAY_ADDRESS",
+			EnvVar: "STACK_GATEWAY_ADDRESS",
 		},
 		cli.StringFlag{
 			Name:   "gateway_handler",
 			Usage:  "Specify the request handler to be used for mapping HTTP requests to services; {api, event, http, rpc}",
-			EnvVar: "GATEWAY_HANDLER",
+			EnvVar: "STACK_GATEWAY_HANDLER",
 		},
 		cli.StringFlag{
 			Name:   "gateway_namespace",
 			Usage:  "Set the namespace used by the gateway e.g. com.example.gateway",
-			EnvVar: "GATEWAY_NAMESPACE",
+			EnvVar: "STACK_GATEWAY_NAMESPACE",
 		},
 		cli.StringFlag{
 			Name:   "gateway_resolver",
 			Usage:  "Set the hostname resolver used by the gateway {host, path, grpc}",
-			EnvVar: "GATEWAY_RESOLVER",
+			EnvVar: "STACK_GATEWAY_RESOLVER",
 		},
 		cli.BoolFlag{
 			Name:   "gateway_enable_rpc",
 			Usage:  "Enable call the backend directly via /rpc",
-			EnvVar: "GATEWAY_ENABLE_RPC",
+			EnvVar: "STACK_GATEWAY_ENABLE_RPC",
 		},
 	}
 
