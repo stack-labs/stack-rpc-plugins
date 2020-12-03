@@ -32,6 +32,7 @@ func run(ctx context.Context, t *testing.T) {
 		stack.Flags(cli.StringFlag{Name: "test.timeout"}),
 		stack.Flags(cli.StringFlag{Name: "test.count"}),
 		stack.Flags(cli.StringFlag{Name: "test.coverprofile"}),
+		stack.Flags(cli.StringFlag{Name: "test.testlogfile"}),
 	)
 
 	yamlConf := `
