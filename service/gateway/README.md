@@ -1,29 +1,12 @@
 # Gateway
 
-```Go
-package main
+`cmd`目录为网关简单用例，包括`yml`配置以及`plugin`的示范
 
-import (
-	"github.com/stack-labs/stack-rpc"
-	"github.com/stack-labs/stack-rpc-plugins/service/gateway"
-	"github.com/stack-labs/stack-rpc/plugin"
-	"github.com/stack-labs/stack-rpc/server/mock"
-	"github.com/stack-labs/stack-rpc/util/log"
-)
-
-func init() {
-	plugin.DefaultServers["mock"] = mock.NewServer
-}
-
-func main() {
-	svc := stack.NewService()
-
-	// run gateway
-	gateway.Hook(svc)
-
-	// run service
-	if err := svc.Run(); err != nil {
-		log.Fatal(err)
-	}
-}
+```shell script
+$ cd cmd
+$ go run main.go plugin.go --config=stack_config.yml
 ```
+
+- 如果作为单纯网关，不需要启动`server`，配置中`stack.server.protocol`可以使用`mock`
+- `example`插件配置可以自己定义，示范的配置层级为`gateway.example`，对应代码段:
+    - `cfg.Get("gateway", "example").Scan(&conf)`

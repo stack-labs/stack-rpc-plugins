@@ -12,7 +12,9 @@ import (
 	"github.com/stack-labs/stack-rpc"
 	"github.com/stack-labs/stack-rpc/api"
 	hApi "github.com/stack-labs/stack-rpc/api/handler/api"
+	"github.com/stack-labs/stack-rpc/config"
 	"github.com/stack-labs/stack-rpc/pkg/cli"
+	memSource "github.com/stack-labs/stack-rpc/pkg/config/source/memory"
 	"github.com/stack-labs/stack-rpc/registry/memory"
 	"github.com/stretchr/testify/assert"
 
@@ -32,10 +34,42 @@ func run(ctx context.Context, t *testing.T) {
 		stack.Flags(cli.StringFlag{Name: "test.coverprofile"}),
 	)
 
+	yamlConf := `
+stack:
+  registry:
+    name: memory
+
+gateway:
+  name: "stack.rpc.gateway"
+  address: ":8080"
+  handler: "meta"
+  resolver: "stack"
+  rpc_path: "/rpc"
+  api_path: "/"
+  proxy_path: "/{service:[a-zA-Z0-9]+}"
+  namespace: "stack.rpc.api"
+  header_prefix: "X-Stack-"
+  enable_rpc: true
+  enable_acme: false
+  enable_tls: false
+  acme:
+    provider: "autocert"
+    challenge_provider: "cloudflare"
+    ca: "https://acme-v02.api.letsencrypt.org/directory"
+    hosts:
+      - ""
+`
+
 	reg := memory.NewRegistry()
 	_ = svc.Init(
 		stack.Registry(reg),
 		stack.Context(ctx),
+		stack.Config(
+			config.NewConfig(
+				config.Source(
+					memSource.NewSource(memSource.WithYAML([]byte(yamlConf)))),
+			),
+		),
 		stack.AfterStart(func() error {
 			wg.Done()
 			return nil
