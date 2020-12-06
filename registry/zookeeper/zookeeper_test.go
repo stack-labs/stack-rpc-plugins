@@ -10,7 +10,7 @@ import (
 
 func TestZKRegistry(t *testing.T) {
 	reg := NewRegistry(
-		registry.Addrs("10.176.149.72:2181"),
+		registry.Addrs("127.0.0.1:2181"),
 		registry.Timeout(20),
 	)
 
