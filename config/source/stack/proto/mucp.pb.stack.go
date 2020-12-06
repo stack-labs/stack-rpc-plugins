@@ -33,7 +33,7 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// httpServer Endpoints for Source service
+// Api Endpoints for Source service
 
 func NewSourceEndpoints() []*api.Endpoint {
 	return []*api.Endpoint{}
@@ -117,7 +117,7 @@ func (x *sourceServiceWatch) Recv() (*WatchResponse, error) {
 	return m, nil
 }
 
-// gatewayServer API for Source service
+// Server API for Source service
 
 type SourceHandler interface {
 	Read(context.Context, *ReadRequest, *ReadResponse) error
