@@ -78,7 +78,6 @@ stack:
 			return nil
 		}),
 		stack.AfterStop(func() error {
-			wg.Done()
 			return nil
 		}),
 	)
