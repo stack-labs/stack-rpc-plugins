@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/stack-labs/stack-rpc"
+	gwServer "github.com/stack-labs/stack-rpc-plugins/service/gateway/server"
 	ahandler "github.com/stack-labs/stack-rpc/api/handler"
 	aapi "github.com/stack-labs/stack-rpc/api/handler/api"
 	"github.com/stack-labs/stack-rpc/api/handler/event"
@@ -88,11 +89,18 @@ type httpServer struct {
 	api apiServer.Server
 }
 
-func NewServer(svc stack.Service) *httpServer {
-	return &httpServer{svc: svc}
+func (s *httpServer) Options() []stack.Option {
+	opts := Options()
+	opts = append(
+		opts,
+		stack.Server(
+			gwServer.NewServer(gwServer.HookServer(s)),
+		),
+	)
+
+	return opts
 }
 
-// gateway api server
 func (s *httpServer) Start() error {
 	svc := s.svc
 	cfg := svc.Options().Config
@@ -293,4 +301,8 @@ func (s *httpServer) Start() error {
 
 func (s *httpServer) Stop() error {
 	return s.api.Stop()
+}
+
+func NewServer(svc stack.Service) *httpServer {
+	return &httpServer{svc: svc}
 }

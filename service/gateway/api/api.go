@@ -5,11 +5,6 @@ import (
 	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
-type Server interface {
-	Start() error
-	Stop() error
-}
-
 // gateway api options
 func Options() (options []stack.Option) {
 	flags := []cli.Flag{

@@ -24,6 +24,3 @@ stack:
       ca: "https://acme-v02.api.letsencrypt.org/directory"
       hosts:
         - ""
-    # Plugins
-    example:
-      key: value

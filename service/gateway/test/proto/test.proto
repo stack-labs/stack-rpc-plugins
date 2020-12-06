@@ -1,14 +1,14 @@
 syntax = "proto3";
 
-package stack.rpc.api.console.account;
+package stack.rpc.gateway.test;
 
 import "github.com/stack-labs/stack-rpc/api/proto/api.proto";
 
 service Test {
-    // rpc模式handler
+    // rpc handler
     rpc Rpc (Request) returns (Response) {
     }
-    // api模式handler
+    // api handler
     rpc Api (go.api.Request) returns (go.api.Response) {
     }
 }

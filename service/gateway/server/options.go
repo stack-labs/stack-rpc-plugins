@@ -8,18 +8,26 @@ import (
 	"github.com/stack-labs/stack-rpc/registry"
 	"github.com/stack-labs/stack-rpc/server"
 	"github.com/stack-labs/stack-rpc/transport"
-
-	"github.com/stack-labs/stack-rpc-plugins/service/gateway/api"
 )
 
-type apiServerKey struct{}
+var (
+	DefaultAddress = ":8080"
+	DefaultName    = "stack.rpc.gateway"
+)
 
-func APIServer(f api.Server) server.Option {
+type hookServerKey struct{}
+
+type hookServer interface {
+	Start() error
+	Stop() error
+}
+
+func HookServer(s hookServer) server.Option {
 	return func(o *server.Options) {
 		if o.Context == nil {
 			o.Context = context.Background()
 		}
-		o.Context = context.WithValue(o.Context, apiServerKey{}, f)
+		o.Context = context.WithValue(o.Context, hookServerKey{}, s)
 	}
 }
 
@@ -52,11 +60,11 @@ func newOptions(opt ...server.Option) server.Options {
 	}
 
 	if len(opts.Address) == 0 {
-		opts.Address = server.DefaultAddress
+		opts.Address = DefaultAddress
 	}
 
 	if len(opts.Name) == 0 {
-		opts.Name = server.DefaultName
+		opts.Name = DefaultName
 	}
 
 	if len(opts.Id) == 0 {

@@ -2,28 +2,17 @@ package main
 
 import (
 	"github.com/stack-labs/stack-rpc"
-	"github.com/stack-labs/stack-rpc-plugins/service/gateway/api"
-	gwServer "github.com/stack-labs/stack-rpc-plugins/service/gateway/server"
-	"github.com/stack-labs/stack-rpc/plugin"
-	"github.com/stack-labs/stack-rpc/server/mock"
 	"github.com/stack-labs/stack-rpc/util/log"
+
+	"github.com/stack-labs/stack-rpc-plugins/service/gateway/api"
 )
 
-func init() {
-	plugin.DefaultServers["mock"] = mock.NewServer
-}
-
 func main() {
-	svc := stack.NewService(stack.Name("stack.rpc.greeter"))
+	svc := stack.NewService()
 
 	// gateway server
-	_ = svc.Init(api.Options()...)
 	apiServer := api.NewServer(svc)
-	svc.Init(
-		stack.Server(
-			gwServer.NewServer(gwServer.APIServer(apiServer)),
-		),
-	)
+	svc.Init(apiServer.Options()...)
 
 	// run service
 	if err := svc.Run(); err != nil {

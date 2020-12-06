@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/stack-labs/stack-rpc-plugins/service/gateway/api"
 	"github.com/stack-labs/stack-rpc/metadata"
 	"github.com/stack-labs/stack-rpc/registry"
 	"github.com/stack-labs/stack-rpc/server"
@@ -303,8 +302,8 @@ func (s *gatewayServer) Start() error {
 
 	stopFn := func() error { return nil }
 	if s.opts.Context != nil {
-		if v := s.opts.Context.Value(apiServerKey{}); v != nil {
-			gwServer := v.(api.Server)
+		if v := s.opts.Context.Value(hookServerKey{}); v != nil {
+			gwServer := v.(hookServer)
 			if err := gwServer.Start(); err != nil {
 				return err
 			}

@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 
-	test "github.com/stack-labs/stack-rpc-plugins/service/gateway/test"
+	test "github.com/stack-labs/stack-rpc-plugins/service/gateway/test/proto"
 	proto "github.com/stack-labs/stack-rpc/api/proto"
 )
 
