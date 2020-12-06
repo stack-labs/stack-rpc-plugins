@@ -40,25 +40,27 @@ stack:
   registry:
     name: memory
 
-gateway:
-  name: "stack.rpc.gateway"
-  address: ":8080"
-  handler: "meta"
-  resolver: "stack"
-  rpc_path: "/rpc"
-  api_path: "/"
-  proxy_path: "/{service:[a-zA-Z0-9]+}"
-  namespace: "stack.rpc.api"
-  header_prefix: "X-Stack-"
-  enable_rpc: true
-  enable_acme: false
-  enable_tls: false
-  acme:
-    provider: "autocert"
-    challenge_provider: "cloudflare"
-    ca: "https://acme-v02.api.letsencrypt.org/directory"
-    hosts:
-      - ""
+  gateway:
+    address: :8080
+    handler: "meta"
+    resolver: "stack"
+    rpc_path: "/rpc"
+    api_path: "/"
+    proxy_path: "/{service:[a-zA-Z0-9]+}"
+    namespace: "stack.rpc.api"
+    header_prefix: "X-Stack-"
+    enable_rpc: true
+    enable_acme: false
+    enable_tls: false
+    acme:
+      provider: "autocert"
+      challenge_provider: "cloudflare"
+      ca: "https://acme-v02.api.letsencrypt.org/directory"
+      hosts:
+        - ""
+    # Plugins
+    example:
+      key: value
 `
 
 	reg := memory.NewRegistry()

@@ -1,13 +1,9 @@
 stack:
-  server:
-    name: "stack.rpc.gateway"
-    version: "1.0.0"
-    address: :8080 # gateway run as server address
-
   registry:
     name: mdns
 
   gateway:
+    address: :8080 # gateway serve address
     handler: "meta"
     resolver: "stack"
     rpc_path: "/rpc"

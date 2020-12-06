@@ -8,20 +8,16 @@ import (
 )
 
 func Hook(svc stack.Service) {
+	apiServer := api.NewServer(svc)
+
 	// gateway options
-	opts := api.Options()
-	svc.Init(opts...)
+	_ = svc.Init(api.Options()...)
 
-	// after stack service start run api gateway
-	svc.Init(stack.AfterStart(func() error {
-		opts, err := api.Run(svc)
-		if err != nil {
-			return err
-		}
-
-		svc.Init(opts...)
-		return nil
-	}))
+	// gateway hook
+	_ = svc.Init(
+		stack.AfterStart(apiServer.Start),
+		stack.AfterStop(apiServer.Stop),
+	)
 
 	// plugin tags
 	plugins := plugin.Plugins()
@@ -29,7 +25,7 @@ func Hook(svc stack.Service) {
 		log.Debugf("plugin: %s", p.String())
 		if flags := p.Flags(); len(flags) > 0 {
 			log.Debugf("flags: %+#s", flags)
-			svc.Init(stack.Flags(flags...))
+			_ = svc.Init(stack.Flags(flags...))
 		}
 	}
 

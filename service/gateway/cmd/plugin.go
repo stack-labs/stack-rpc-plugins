@@ -24,14 +24,14 @@ func init() {
 				conf := struct {
 					Key string `json:"key"`
 				}{}
-				cfg.Get("gateway", "example").Scan(&conf)
+				_ = cfg.Get("stack", "gateway", "example").Scan(&conf)
 
 				log.Infof("gateway plugin example init with key=%v", conf.Key)
 				return nil
 			}),
 			plugin.WithHandler(func(h http.Handler) http.Handler {
 				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					log.Info("gateway plugin example")
+					log.Debugf("gateway plugin example")
 
 					h.ServeHTTP(w, r)
 				})
