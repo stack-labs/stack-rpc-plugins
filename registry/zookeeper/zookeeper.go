@@ -54,7 +54,7 @@ func configure(z *zookeeperRegistry, opts ...registry.Option) error {
 	}
 
 	if len(z.options.Addrs) == 0 {
-		z.options.Addrs = strings.Split(config.Get("stack.registry.zookeeper.address").String(""), ",")
+		z.options.Addrs = strings.Split(config.Get("stack", "registry", "zookeeper", "address").String(""), ",")
 		log.Infof("zk server address: %v", z.options.Addrs)
 	}
 
