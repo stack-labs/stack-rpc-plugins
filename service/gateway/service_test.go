@@ -18,8 +18,8 @@ import (
 	"github.com/stack-labs/stack-rpc/registry/memory"
 	"github.com/stretchr/testify/assert"
 
-	test "github.com/stack-labs/stack-rpc-plugins/service/gateway/test"
 	"github.com/stack-labs/stack-rpc-plugins/service/gateway/test/handler"
+	test "github.com/stack-labs/stack-rpc-plugins/service/gateway/test/proto"
 )
 
 func run(ctx context.Context, t *testing.T) {
@@ -32,6 +32,7 @@ func run(ctx context.Context, t *testing.T) {
 		stack.Flags(cli.StringFlag{Name: "test.timeout"}),
 		stack.Flags(cli.StringFlag{Name: "test.count"}),
 		stack.Flags(cli.StringFlag{Name: "test.coverprofile"}),
+		stack.Flags(cli.StringFlag{Name: "test.testlogfile"}),
 	)
 
 	yamlConf := `
@@ -39,25 +40,27 @@ stack:
   registry:
     name: memory
 
-gateway:
-  name: "stack.rpc.gateway"
-  address: ":8080"
-  handler: "meta"
-  resolver: "stack"
-  rpc_path: "/rpc"
-  api_path: "/"
-  proxy_path: "/{service:[a-zA-Z0-9]+}"
-  namespace: "stack.rpc.api"
-  header_prefix: "X-Stack-"
-  enable_rpc: true
-  enable_acme: false
-  enable_tls: false
-  acme:
-    provider: "autocert"
-    challenge_provider: "cloudflare"
-    ca: "https://acme-v02.api.letsencrypt.org/directory"
-    hosts:
-      - ""
+  gateway:
+    address: :8080
+    handler: "meta"
+    resolver: "stack"
+    rpc_path: "/rpc"
+    api_path: "/"
+    proxy_path: "/{service:[a-zA-Z0-9]+}"
+    namespace: "stack.rpc.api"
+    header_prefix: "X-Stack-"
+    enable_rpc: true
+    enable_acme: false
+    enable_tls: false
+    acme:
+      provider: "autocert"
+      challenge_provider: "cloudflare"
+      ca: "https://acme-v02.api.letsencrypt.org/directory"
+      hosts:
+        - ""
+    # Plugins
+    example:
+      key: value
 `
 
 	reg := memory.NewRegistry()
@@ -75,7 +78,6 @@ gateway:
 			return nil
 		}),
 		stack.AfterStop(func() error {
-			wg.Done()
 			return nil
 		}),
 	)
