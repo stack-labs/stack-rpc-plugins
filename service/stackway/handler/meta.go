@@ -7,7 +7,7 @@ import (
 	"github.com/stack-labs/stack-rpc/api/handler"
 	"github.com/stack-labs/stack-rpc/api/handler/event"
 	"github.com/stack-labs/stack-rpc/api/router"
-	"github.com/stack-labs/stack-rpc/errors"
+	"github.com/stack-labs/stack-rpc/util/errors"
 
 	// TODO: only import handler package
 	aapi "github.com/stack-labs/stack-rpc/api/handler/api"

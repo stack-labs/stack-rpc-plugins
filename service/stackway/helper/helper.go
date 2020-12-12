@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/stack-labs/stack-rpc/metadata"
+	"github.com/stack-labs/stack-rpc/pkg/metadata"
 )
 
 type TLS struct {
