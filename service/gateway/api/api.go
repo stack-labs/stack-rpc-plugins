@@ -1,3 +1,4 @@
+// Package api is an API Gateway
 package api
 
 import (
@@ -5,28 +6,38 @@ import (
 	"github.com/stack-labs/stack-rpc/pkg/cli"
 )
 
-// gateway api options
+// api gateway options
 func Options() (options []stack.Option) {
 	flags := []cli.Flag{
 		cli.StringFlag{
+			Name:   "gateway_name",
+			Usage:  "Gateway name",
+			EnvVar: "STACK_GATEWAY_NAME",
+		},
+		cli.StringFlag{
+			Name:   "gateway_address",
+			Usage:  "Set the gateway address e.g 0.0.0.0:8080",
+			EnvVar: "STACK_GATEWAY_ADDRESS",
+		},
+		cli.StringFlag{
 			Name:   "gateway_handler",
 			Usage:  "Specify the request handler to be used for mapping HTTP requests to services; {api, event, http, rpc}",
-			EnvVar: "GATEWAY_HANDLER",
+			EnvVar: "STACK_GATEWAY_HANDLER",
 		},
 		cli.StringFlag{
 			Name:   "gateway_namespace",
 			Usage:  "Set the namespace used by the gateway e.g. com.example.gateway",
-			EnvVar: "GATEWAY_NAMESPACE",
+			EnvVar: "STACK_GATEWAY_NAMESPACE",
 		},
 		cli.StringFlag{
 			Name:   "gateway_resolver",
 			Usage:  "Set the hostname resolver used by the gateway {host, path, grpc}",
-			EnvVar: "GATEWAY_RESOLVER",
+			EnvVar: "STACK_GATEWAY_RESOLVER",
 		},
 		cli.BoolFlag{
 			Name:   "gateway_enable_rpc",
 			Usage:  "Enable call the backend directly via /rpc",
-			EnvVar: "GATEWAY_ENABLE_RPC",
+			EnvVar: "STACK_GATEWAY_ENABLE_RPC",
 		},
 	}
 

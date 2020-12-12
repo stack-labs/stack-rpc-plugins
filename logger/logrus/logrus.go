@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stack-labs/stack-rpc-plugins/logger/logrus/lumberjack.v2"
 	"github.com/stack-labs/stack-rpc/logger"
+	sLog "github.com/stack-labs/stack-rpc/util/log"
 )
 
 var (
@@ -61,7 +61,7 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
 			err = os.MkdirAll(dir, os.ModePerm)
 			if err != nil {
-				logger.Errorf("create logs dir err: %s", err)
+				sLog.Errorf("create logs dir err: %s", err)
 			}
 		}
 
@@ -72,7 +72,7 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 			if _, err := os.Stat(l.opts.Persistence.BackupDir); os.IsNotExist(err) {
 				err = os.MkdirAll(l.opts.Persistence.BackupDir, os.ModePerm)
 				if err != nil {
-					logger.Errorf("create backup dir err: %s", err)
+					sLog.Errorf("create backup dir err: %s", err)
 				}
 			}
 		}
@@ -83,14 +83,14 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 			maxBackups = l.opts.Persistence.MaxBackupSize / l.opts.Persistence.MaxFileSize
 		}
 		fileName := fmt.Sprintf("%s%sapp.log", l.opts.Persistence.Dir, pathSeparator)
-		log.SetOutput(&lumberjack.Logger{
+		l.opts.Out = &lumberjack.Logger{
 			Filename:   fileName,
 			MaxSize:    l.opts.Persistence.MaxFileSize,
 			MaxBackups: maxBackups,
 			MaxAge:     l.opts.Persistence.MaxBackupKeepDays,
 			Compress:   true,
 			BackupDir:  l.opts.Persistence.BackupDir,
-		})
+		}
 	}
 
 	if l.opts.Out == nil {
@@ -105,7 +105,7 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 	log.ExitFunc = l.opts.ExitFunc
 	if l.opts.SplitLevel {
 		// Send all logs to nowhere by default
-		logger.Infof("split log into different level files")
+		sLog.Infof("split log into different level files")
 		log.SetOutput(ioutil.Discard)
 		log.ReplaceHooks(prepareLevelHooks(*l.opts.Persistence, log.Level))
 	}
