@@ -112,6 +112,9 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 
 	l.Logger = log
 
+	// replace the DefaultLogger
+	logger.DefaultLogger = l
+
 	return nil
 }
 
