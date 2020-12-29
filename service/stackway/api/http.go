@@ -6,7 +6,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/stack-labs/stack-rpc"
-	gwServer "github.com/stack-labs/stack-rpc-plugins/service/stackway/server"
 	ahandler "github.com/stack-labs/stack-rpc/api/handler"
 	aapi "github.com/stack-labs/stack-rpc/api/handler/api"
 	"github.com/stack-labs/stack-rpc/api/handler/event"
@@ -24,17 +23,21 @@ import (
 	"github.com/stack-labs/stack-rpc/api/server/acme"
 	"github.com/stack-labs/stack-rpc/api/server/acme/autocert"
 	httpapi "github.com/stack-labs/stack-rpc/api/server/http"
-	stackConfig "github.com/stack-labs/stack-rpc/config"
 	"github.com/stack-labs/stack-rpc/util/log"
 
 	"github.com/stack-labs/stack-rpc-plugins/service/stackway/handler"
 	"github.com/stack-labs/stack-rpc-plugins/service/stackway/helper"
 	"github.com/stack-labs/stack-rpc-plugins/service/stackway/plugin"
+	gwServer "github.com/stack-labs/stack-rpc-plugins/service/stackway/server"
 )
 
 type config struct {
-	Server   *stackConfig.Server `json:"server"`
-	Stackway *stackway           `json:"stackway"`
+	Server   *server   `json:"server"`
+	Stackway *stackway `json:"stackway"`
+}
+
+type server struct {
+	Address string `json:"address"`
 }
 
 type stackway struct {
@@ -62,7 +65,7 @@ type acmeConfig struct {
 
 func newDefaultConfig() *config {
 	return &config{
-		Server: &stackConfig.Server{
+		Server: &server{
 			Address: ":8080",
 		},
 		Stackway: &stackway{
@@ -111,6 +114,8 @@ func (s *httpServer) Start() error {
 			}
 		}
 	}
+
+	log.Debugf("stack config: %v", string(cfg.Bytes()))
 
 	gwConf := conf.Stackway
 	address := conf.Server.Address
